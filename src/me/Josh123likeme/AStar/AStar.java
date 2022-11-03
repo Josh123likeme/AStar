@@ -19,14 +19,14 @@ public class AStar {
 		Vector2D pick = start.clone();
 		
 		do {
-			/*
+			
 			try {
 				Thread.sleep(100);
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			*/
+			
 			//expand
 			for (int y = -1; y <= 1; y++) {
 				
