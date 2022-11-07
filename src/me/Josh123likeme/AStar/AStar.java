@@ -12,6 +12,8 @@ public class AStar {
 		boolean[][] cleared = new boolean[board.getHeight()][board.getWidth()];
 		boolean[][] tried = new boolean[board.getHeight()][board.getWidth()];
 		
+		double[][] gCosts = new double[board.getHeight()][board.getWidth()];
+		
 		Vector2D[][] parents = new Vector2D[board.getHeight()][board.getWidth()];
 		
 		tried[start.Y][start.X] = true;
@@ -20,17 +22,12 @@ public class AStar {
 		
 		do {
 			
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			
 			//expand
 			for (int y = -1; y <= 1; y++) {
 				
 				for (int x = -1; x <= 1; x++) {
+					
+					if (x == 0 && y == 0) continue;
 					
 					Vector2D attempt = new Vector2D(pick.X + x, pick.Y + y);
 					
@@ -39,9 +36,25 @@ public class AStar {
 					if (board.getBlockAt(attempt.X, attempt.Y) == -1) continue;
 							
 					if (tried[attempt.Y][attempt.X]) continue;
-								
-					cleared[attempt.Y][attempt.X] = true;
-					parents[attempt.Y][attempt.X] = pick.clone();
+					
+					if (parents[attempt.Y][attempt.X] == null) {
+						
+						cleared[attempt.Y][attempt.X] = true;
+						parents[attempt.Y][attempt.X] = pick.clone();
+						
+						if (x == 0 || y == 0) gCosts[attempt.Y][attempt.X] = gCosts[pick.Y][pick.X] + 1;
+						else gCosts[attempt.Y][attempt.X] = gCosts[pick.Y][pick.X] + Math.sqrt(2);
+						
+					}
+					
+					if (gCosts[pick.Y][pick.X] < gCosts[parents[attempt.Y][attempt.X].Y][parents[attempt.Y][attempt.X].X]) {
+						
+						parents[attempt.Y][attempt.X] = pick.clone();
+						
+						if (x == 0 || y == 0) gCosts[attempt.Y][attempt.X] = gCosts[pick.Y][pick.X] + 1;
+						else gCosts[attempt.Y][attempt.X] = gCosts[pick.Y][pick.X] + Math.sqrt(2);
+						
+					}	
 					
 				}
 				
@@ -61,8 +74,8 @@ public class AStar {
 					
 					Vector2D current = new Vector2D(x, y);
 					
-					double fCost = current.distanceTo(start) + current.distanceTo(end);
-					
+					double fCost = gCosts[current.Y][current.X] + current.distanceTo(end);
+
 					if (fCost < bestFCost) {
 						
 						bestFCosts.clear();
@@ -133,6 +146,7 @@ public class AStar {
 		
 		do {
 			
+			//this line is for debugging purposes
 			board.setBlockAt(parent.X, parent.Y, 5);
 			
 			reversePath.add(parent);

@@ -72,23 +72,27 @@ public class Game extends Canvas implements Runnable {
 		
 		Board board = Main.board;
 		
+		double blockSize = (double) getWidth() / board.getWidth() < (double) getHeight() / board.getHeight() ? (double) getWidth() / board.getWidth() : (double) getHeight() / board.getHeight();
+		
 		for (int y = 0; y < board.getHeight(); y++) {
 			
 			for (int x = 0; x < board.getWidth(); x++) {
 				
-				g.setColor(Color.black);
+				int colour = 0;
 				
-				g.fillRect(x * 30, y * 30, 30, 30);
+				if (board.getBlockAt(x, y) == -1) colour = 255 << 24 | 0 << 16 | 0 << 8 | 0; //wall
+				else if (board.getBlockAt(x, y) == 0) colour = 255 << 24 | 255 << 16 | 255 << 8 | 255; //empty tile
+				else if (board.getBlockAt(x, y) == 1) colour = 255 << 24 | 0 << 16 | 0 << 8 | 255; //start
+				else if (board.getBlockAt(x, y) == 2) colour = 255 << 24 | 0 << 16 | 0 << 8 | 255; //end
+				else if (board.getBlockAt(x, y) == 3) colour = 255 << 24 | 0 << 16 | 255 << 8 | 0; //cleared
+				else if (board.getBlockAt(x, y) == 4) colour = 255 << 24 | 255 << 16 | 0 << 8 | 0; //tried
+				else if (board.getBlockAt(x, y) == 5) colour = 255 << 24 | 0 << 16 | 0 << 8 | 255; //path
 				
-				if (board.getBlockAt(x, y) == -1) g.setColor(Color.black);
-				else if (board.getBlockAt(x, y) == 0) g.setColor(Color.white);
-				else if (board.getBlockAt(x, y) == 1) g.setColor(Color.blue);
-				else if (board.getBlockAt(x, y) == 2) g.setColor(Color.orange);
-				else if (board.getBlockAt(x, y) == 3) g.setColor(Color.green);
-				else if (board.getBlockAt(x, y) == 4) g.setColor(Color.red);
-				else if (board.getBlockAt(x, y) == 5) g.setColor(Color.pink);
+				Color color = new Color(colour);
 				
-				g.fillRect(x * 30 + 2, y * 30 + 2, 26, 26);
+				g.setColor(color);
+				
+				g.fillRect((int) (x * blockSize) , (int) (y * blockSize), (int) (blockSize) + 1, (int) (blockSize) + 1);
 				
 			}
 			
